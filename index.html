@@ -8,23 +8,36 @@
       margin: 0;
       padding: 0;
       height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-    .pdf-container {
-      width: 100%;
-      height: calc(100vh - 100px); /* Adjust height based on other content */
-    }
-    .note {
-      padding: 20px;
+    .content {
       text-align: center;
+      padding: 20px;
+    }
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .preview-image {
+      max-width: 80%;
+      height: auto;
+    }
+    .download-link {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="note"><h1>Soon, there will be material here that expands on our tutorial for using variability in psychological theorizing. Until then, here is the poster on it from the TeaP 2025.</h1></div>
-  <div class="pdf-container">
-    <object data="poster_online.pdf" type="application/pdf" width="100%" height="100%">
-      <p>Unable to display PDF file. <a href="poster.pdf">Download</a> instead.</p>
-    </object>
+  <div class="content">
+    <h1>Soon, there will be material here that expands on our tutorial for using variability in psychological theorizing. Until then, here is the poster preview from the TeaP 2025.</h1>
+  </div>
+  <div class="preview-container">
+    <img src="poster_preview.png" alt="Poster Preview" class="preview-image">
+    <a href="poster.pdf" class="download-link" download>Download the full PDF</a>
   </div>
 </body>
 </html>
