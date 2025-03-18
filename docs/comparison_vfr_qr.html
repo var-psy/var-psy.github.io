@@ -579,7 +579,7 @@ display: none;
 <div id="simulation-scenarios" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Simulation Scenarios</h1>
 <p>This Monte-Carlo experiment aims to analyze the performance of the two-step approach with gamma regression for the squared residuals, VFR with ML and REML estimation, and QR in scenarios that are often encountered by empirical researchers in the behavioral sciences. Small-sample bias is a key concern, as sample sizes in behavioral science research, including regions and individuals, are often limited. Since some experiments and larger survey-based studies include a large number of respondents, the consistency of the estimated parameters and their large-sample bias is still of interest. Complex and sometimes unknown functional forms of relationships, in addition to outliers, are also often encountered issues.</p>
-<p>To achieve this, we defined among others the following scenarios. Given <span class="math inline">\(X \sim U(1,10)\)</span> and <span class="math inline">\(Z \sim B(n_{\text{obs}}; 0.5)\)</span>, the true data generation processes of <span class="math inline">\(Y\)</span> are as follows.</p>
+<p>To achieve this, we defined among others the following scenarios. Given <span class="math inline">\(X \sim U(1,10)\)</span> and <span class="math inline">\(Z \sim Bern(0.5)\)</span>, the true data generation processes of <span class="math inline">\(Y\)</span> are as follows.</p>
 <p><em>Scenario 1</em>: The variance is constant, but the expectation depends non-linearly on <span class="math inline">\(X\)</span>:
 <span class="math display">\[Y_i = 0.5 + 0.5x_i + x_i^2 + 1 \epsilon_i \text{ with } \epsilon_i \sim N(0,1)\]</span></p>
 <p><em>Scenario 2</em>: The variance depends exponentially on an interaction between <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span>:
@@ -865,7 +865,7 @@ Figure 3.1: Histogram of estimates given a misspecified mean model
 <span class="math inline">\(\lambda_Z\)</span>
 </th>
 <th style="text-align:center;">
-<span class="math inline">\(\lambda_ZX\)</span>
+<span class="math inline">\(\lambda_{XZ}\)</span>
 </th>
 </tr>
 </thead>
@@ -1383,10 +1383,10 @@ REML
 </tbody>
 </table>
 <p><em>Note</em>. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.</p>
-<p>Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of λ_x and λ_z. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function λ_0 are still biased (Table @ref(tab:tab-s2_1000)).</p>
+<p>Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of <span class="math inline">\(λ_x\)</span> and <span class="math inline">\(λ_z\)</span>. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function <span class="math inline">\(λ_0\)</span> are still biased (Table <a href="#tab:tab-s2-1000">3.3</a>).</p>
 <table class=" lightable-classic" style="color: black; font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-(#tab:tab-s2_1000)Performance of VFR point estimates for exponential variance for <span class="math inline">\(n = 1000\)</span>
+<span id="tab:tab-s2-1000">Table 3.3: </span>Performance of VFR point estimates for exponential variance for <span class="math inline">\(n = 1000\)</span>
 </caption>
 <thead>
 <tr>
@@ -1404,7 +1404,7 @@ REML
 <span class="math inline">\(\lambda_Z\)</span>
 </th>
 <th style="text-align:center;">
-<span class="math inline">\(\lambda_ZX\)</span>
+<span class="math inline">\(\lambda_{XZ}\)</span>
 </th>
 </tr>
 </thead>
@@ -1667,10 +1667,10 @@ REML
 </tbody>
 </table>
 <p><em>Note</em>. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.</p>
-<p>Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes (Table <a href="#tab:tab-s3">3.3</a>). However, the power for identifying any of the effects is also below 10% for both n=30 and n=50. Additionally, the estimates of Δ_τ (β_z) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for n=1000. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for λ_z respectively the difference in Δ_τ (β_z) could be attributed to it being the estimate for the effect of Z for X=0, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.</p>
+<p>Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes (Table <a href="#tab:tab-s3">3.4</a>). However, the power for identifying any of the effects is also below 10% for both <span class="math inline">\(n=30\)</span> and <span class="math inline">\(n=50\)</span>. Additionally, the estimates of <span class="math inline">\(Δ_τ\)</span> (<span class="math inline">\(β_Z\)</span>) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for <span class="math inline">\(n=1000\)</span>. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for <span class="math inline">\(λ_Z\)</span> respectively the difference in <span class="math inline">\(Δ_τ\)</span> (<span class="math inline">\(β_Z\)</span>) could be attributed to it being the estimate for the effect of <span class="math inline">\(Z\)</span> for <span class="math inline">\(X=0\)</span>, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.</p>
 <table class=" lightable-classic" style="color: black; font-family: Cambria; width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:tab-s3">Table 3.3: </span>Performance of VFR point estimates for exponential variance for <span class="math inline">\(n = 1000\)</span>
+<span id="tab:tab-s3">Table 3.4: </span>Performance of difference of third and second quartile QR point estimates
 </caption>
 <thead>
 <tr>
