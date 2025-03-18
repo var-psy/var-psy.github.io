@@ -1,0 +1,546 @@
+---
+title: "A Comparison of Variance Function Regression and Quantile Regression"
+author: "Daniel Gotthardt, Christoph Naefgen & Anne Reinarz"
+date: "`r Sys.Date()`"
+output: bookdown::html_document2
+---
+
+```{r setup, include=FALSE}
+
+# Clean up workspace -------------------------------------
+rm(list=ls(all.names = TRUE))
+gc()
+
+library(here)
+library(ggplot2)
+library(viridis)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+
+theme_set(theme_bw(base_size = 10,
+                   base_family = "sans"))
+
+#Define convenience functions
+
+## Check for extreme outliers
+is.extreme.Fun <- function(x) {
+  return(x < quantile(x, 0.25, na.rm=TRUE) - 3 * IQR(x, na.rm=TRUE) | x > quantile(x, 0.75, na.rm=TRUE) + 3 * IQR(x, na.rm=TRUE))
+}
+
+```
+
+# Introduction
+
+We conducted a Monte-Carlo simulation study (Sawilowsky, 2003) to evaluate and demonstrate some advantages and disadvantages of the two-step method, the maximum likelihood (ML) and restricted maximum likelihood (REML) variance function regression (VFR), and quantile regression (QR).
+
+Western & Bloome (2009) give an extended exposition on using variance function regressions to model substantial differences in variance as indicators of differential inequality. Most approaches model the conditional expectation of the squared residuals $\epsilon_i^2$ of a conditional mean model as a function of predictors $Z_i$​. In the most simple two-step model, the variance of the residuals can be expressed as the expectation of the squared residuals: $\text{Var}(\epsilon_i) = E(\epsilon_i^2) - E(\epsilon_i)^2 = E(\epsilon_i^2)$, and the conditional variance is modeled as: $\text{Var}(Y_i \mid Z_i) = E(\epsilon_i^2 \mid Z_i) = \lambda \cdot Z_i$ with ordinary least squares (OLS) regression. An improved solution takes into account that the squared residuals are non-negative and gamma-distributed if $\epsilon_i$ is normally distributed (Culpepper, 2010 Appendix C), hence the use of generalized linear models (McCullagh & Nelder, 1989) with a log-link $\ln(E(\epsilon_i^2 \mid Z_i))$ and gamma-distribution.
+
+While this two-step solution takes distributional features of the residuals into account, it does ignore that the OLS residuals are biased estimators for heteroscedastic errors. To alleviate this issue, an iterative approach maximizing the likelihood of a joint expectation and variance model was proposed by Aitkin (1987). While the parameters of the joint location-scale model can be estimated with maximum likelihood (ML), the sensitivity especially of the variance parameter estimates to assumption violations (cf. Dunn & Smyth, 2018, p. 297ff.) has led to the development of restricted maximum likelihood (REML) estimators (Verbyla, 1993).
+
+QR (Koenker & Bassett Jr, 1978; Koenker, 2005a) is a statistical method that extends the concept of conditional boxplots to conditional quantiles dependent on categorical and continuous predictors, enabling researchers to investigate the relationships between explanatory variables and the distribution of response variables at different quantiles. Linear QR estimates the optimal linear combination of predictors $X_i$ to fit the conditional regression quantiles $Q_\tau (Y_i \mid X_i)$ for each quantile $\tau$ separately as $Q_\tau (Y_i \mid X_i) = \beta_x X_i$ by minimizing the weighted absolute deviations from this line. Comparing the regression coefficients for different quantiles facilitates a more nuanced understanding of how variability and trends differ across the distribution of the data. While QR has primarily been used to analyze inequality (cf. Killewald & Bearak, 2014), it has recently been discussed as a tool to assess heterogeneous intervention effects (Willke et al., 2012; Marino & Farcomeni, 2015).
+
+This study examines how these methods perform in analyzing differences in conditional dispersion. Previous simulation studies have typically restricted their scope to a limited number of scenarios, often lacking comparisons between quantile-based and variance-based methods (Western & Bloome, 2009) or have focused on medium and large sample sizes (Yang, 2019). In those studies, REML and Bayesian estimation methods outperformed ML and Two-Step estimators with small sample sizes. QR was found to be robust against model misspecification (Cheng, 2012; Yang, 2019) and performs well in the presence of outliers (Bellio & Coletto, 2016; Geraci & Bottai, 2014), although this is less true for the difference between extreme quantiles (Huber & Melly, 2011).
+
+# Simulation Scenarios
+
+This Monte-Carlo experiment aims to analyze the performance of the two-step approach with gamma regression for the squared residuals, VFR with ML and REML estimation, and QR in scenarios that are often encountered by empirical researchers in the behavioral sciences. Small-sample bias is a key concern, as sample sizes in behavioral science research, including regions and individuals, are often limited. Since some experiments and larger survey-based studies include a large number of respondents, the consistency of the estimated parameters and their large-sample bias is still of interest. Complex and sometimes unknown functional forms of relationships, in addition to outliers, are also often encountered issues.
+
+To achieve this, we defined among others the following scenarios. Given $X \sim U(1,10)$ and $Z \sim B(n_{\text{obs}}; 0.5)$, the true data generation processes of $Y$ are as follows.
+
+*Scenario 1*: The variance is constant, but the expectation depends non-linearly on $X$:
+$$Y_i = 0.5 + 0.5x_i + x_i^2 + 1 \epsilon_i \text{ with } \epsilon_i \sim N(0,1)$$
+
+*Scenario 2*: The variance depends exponentially on an interaction between $X$ and $Z$:
+$$Y_i = 3 + 0.5x_i + 0.2x_i^2 - z_i - 3x_i z_i + \sigma_i \epsilon_i \text{ with }  \epsilon_i \sim N(0,1)$$
+
+$$\sigma_i = \sqrt{\exp(2 + 0.5x_i + 0.2z_i - 0.4x_i z_i)}$$
+
+*Scenario 3*: The variance depends linearly on an interaction between $X$ and $Z$:
+$$Y_i = 3 + 0.5x_i + 0.2x_i^2 - z_i - 3x_i z_i + \sigma_i \epsilon_i
+\text{ with } \epsilon_i \sim N(0,1)$$ 
+$$\sigma_i = 5 + 3x_i + z_i - 2x_i$$
+
+Each scenario was simulated 5000 times for sample sizes of 30, 50, and 1000 to study performance across small and large samples. While all methods in Scenario 1 are evaluated by Type I error rates, if the location model is misspecified, the bias, empirical standard error, and 95% confidence interval coverage rates in Scenario 2 and Scenario 3 are separately analyzed for variance-based and quantile-based methods respectively to evaluate them under a complex true data generating process without misspecification.
+
+If an algorithm did not succeed in estimation, this estimation was excluded from the corresponding evaluation. Performance measures will then be calculated for this method without repeating the simulation. Due to the inherent statistical error of Monte-Carlo experiments, performance measures are only estimators of true performance. We calculated the Monte-Carlo standard error (MCSE) for performance measures accordingly (Morris et al., 2019, p. 2086, Table 6).
+
+The models were estimated in R with `lm()` and `glm()` for the two-step method, with `dglm::dglm()` for the ML and REML variance function regression, and with `quantreg::rq()` for QR and `quantreg::anova.rq()` to test the difference between the QR coefficients for the second and third quartile. Performance measures and MCSE are calculated with the `rsimsum` package (Gasparini, 2018).
+
+
+# Results
+
+## Scenario 1
+
+Focusing on the rejection rates for the null hypotheses that there is no effect of $X$ on the dispersion of $Y$, it is obvious that the two-step estimator is behaving surprisingly well but otherwise the variance function regression is identifying the quadratic location effect as a dispersion effect (Table \@ref(tab:tab_s1)). Furthermore, in the second stage of the Two-Step method, the gamma GLM was unable to provide any estimators for a significant percentage of the simulated datasets with small sample sizes. Therefore, the good performance measures should not be overinterpreted. With a sample size of $n = 30$, the Type I error of the REML method is 87.9% (0.5%), even higher than that of the ML method at 85.0% (0.5%). QR proves very robust even under misspecification, having only slightly higher than nominal rejection rates (6%) for $n=50$ and $n=1000$. However, it becomes clear here that misspecification of the functional term leads to significant inference problems in variance function regression, in addition to biases in the mean model.
+
+```{r tab_s1, echo=FALSE, warning=FALSE, results='asis'}
+
+# Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
+
+estimands <- c("beta_1","lambda_1")
+perform <- c("reject")
+
+# n = 30
+
+est.30.agg <- readRDS(here("data/S3_Nullx2_est_agg_30.rds"))
+est.30.agg <- subset(est.30.agg, coef.type %in% estimands)
+
+est.30.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.30.agg$reject, digits=3), round(est.30.agg$rejection_mcse, digits=3))
+
+names(perform) <- c("$H_0$ rejection rate , n = 30")
+
+est.table.30 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.30.agg[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- cbind(c("","","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",estimands)  
+  return(var=table)
+})
+
+# n = 50
+
+est.50.agg <- readRDS(here("data/S3_Nullx2_est_agg_50.rds"))
+est.50.agg <- subset(est.50.agg, coef.type %in% estimands)
+
+
+est.50.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.50.agg$reject, digits=3), round(est.50.agg$rejection_mcse, digits=3))
+
+names(perform) <- c("$H_0$ rejection rate , n = 50")
+
+est.table.50 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.50.agg[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- cbind(c("","","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",estimands)
+  return(var=table)
+})
+
+# n = 1000
+
+est.1000.agg <- readRDS(here("data/S3_Nullx2_est_agg_1000.rds"))
+est.1000.agg <- subset(est.1000.agg, coef.type %in% estimands)
+
+
+est.1000.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.1000.agg$reject, digits=3), round(est.1000.agg$rejection_mcse, digits=3))
+
+names(perform) <- c("$H_0$ rejection rate , n = 1000")
+
+est.table.1000 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.1000.agg[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- cbind(c("","","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",estimands)
+  return(var=table)
+})
+
+ rejectiontable <- rbind(do.call(rbind, est.table.30), do.call(rbind, est.table.50), do.call(rbind, est.table.1000))
+
+ kable(rejectiontable, 
+       caption = "Type I Error Rates for misspecified location model",
+       col.names = c("","","$\\beta_X$","$\\lambda_X$"),
+       format = "html", align = c("l", "l", "c", "c"), row.names = FALSE) |> 
+  kable_classic(full_width = F, html_font = "Cambria")
+```
+*Note*. Based on 5000 simulation runs. $λ_X$ rejection rate for QR is estimated by F-like-test of difference of second and third quartile. Monte-Carlo standard error reported in brackets.
+
+Why are the variance function regression Type I error rates so high, even though the estimates are on average not strongly biased (not shown)? Figure \@ref(fig:hist-s1) demonstrates that going beyond the mean can also be important for methodological studies. The ML and REML estimates are bimodally distributed if the quadratic relationship for the location model is ignored. The estimates spread around approximately +1 and -1, leading to no bias on average but resulting in entirely unreliable results. However, the distributions of the QR estimators also show heavier tails, which may lead to the incorrect assumption of a strong effect in the unlikely event of rejecting a false null hypothesis. Nonetheless, this risk is significantly lower than with the bimodal distribution of the estimators in variance function regression, and QR was able to provide estimates in all cases.
+
+
+```{r hist-s1, fig.cap ="Histogram of estimates given a misspecified mean model", fig.topcaption = TRUE, echo=FALSE, results='asis', warning = FALSE, dpi=150, fig.width = 4.5,  fig.height = 3.5}
+
+
+
+# I Scenario Null with Non-linear mean model --------------------------
+## Load Data
+
+est.long.30 <- readRDS(file=here("data/S3_Nullx2_est_long_30.rds"))
+est.30.agg <- readRDS(file=here("data/S3_Nullx2_est_agg_30.rds"))
+est.long.50 <- readRDS(file=here("data/S3_Nullx2_est_long_50.rds"))
+est.50.agg <- readRDS(file=here("data/S3_Nullx2_est_agg_50.rds"))
+est.long.1000 <- readRDS(file=here("data/S3_Nullx2_est_long_1000.rds"))
+est.1000.agg <- readRDS(file=here("data/S3_Nullx2_est_agg_1000.rds"))
+
+## Data preperation
+
+est.n <- merge(est.long.30,est.long.50, by=c("repetition","model","coef.type"), suffixes=c(".30",".50"))
+est.n <- merge(est.n, est.long.1000, by=c("repetition","model","coef.type"))
+colnames(est.n)[(ncol(est.n)-8):ncol(est.n)] <- c( "coef.1000", "se.1000", "p.1000","true.1000", "bias.1000", "ci_lo.1000", "ci_hi.1000", "cover.1000", "reject.1000")
+est.n.graph <- reshape(est.n, 
+                      direction ="long", 
+                      idvar= c("repetition","model","coef.type"), 
+                      varying = 4:(ncol(est.n)),
+                      timevar ="n_obs")
+est.n.graph$coef.type <- sapply(strsplit(est.n.graph$coef.type,"_"),
+                                function(vec) 
+                                  do.call(sprintf, c(list("widehat(%s)[%s]"),vec
+                                  )))
+est.n.graph$n_obs <- factor(sprintf("n = %s",est.n.graph$n_obs),
+                            levels=c("n = 30", "n = 50", "n = 1000"))
+est.n.graph$model <- factor(est.n.graph$model,
+                            levels=c("Two-Step", "ML", "REML","QR"))
+
+est.n.agg <- merge(est.30.agg,est.50.agg, by=c("repetition","model","coef.type"), suffixes=c(".30",".50"))
+est.n.agg <- merge(est.n.agg, est.1000.agg, by=c("repetition","model","coef.type"))
+colnames(est.n.agg)[(ncol(est.n.agg)-12):ncol(est.n.agg)] <- sprintf("%s.1000",colnames(est.n.agg)[(ncol(est.n.agg)-12):ncol(est.n.agg)])
+est.n.agg.graph <- reshape(est.n.agg, 
+                          direction ="long", 
+                          idvar= c("repetition","model","coef.type"), 
+                          varying = 4:(ncol(est.n.agg)),
+                          timevar ="n_obs")
+est.n.agg.graph$coef.type <- sapply(strsplit(est.n.agg.graph$coef.type,"_"),
+                                    function(vec) 
+                                      do.call(sprintf, c(list("widehat(%s)[%s]"),vec
+                                      )))
+est.n.agg.graph$n_obs <- factor(sprintf("n = %s",est.n.agg.graph$n_obs),
+                                levels=c("n = 30", "n = 50", "n = 1000"))
+est.n.agg.graph$model <- factor(est.n.agg.graph$model,
+                                levels=c("Two-Step", "ML", "REML","QR"))
+
+## Delete temporary variables
+rm(list=ls()[! (ls() %in% lsf.str() |ls() %in% c("est.n.agg.graph","est.n.graph"))])
+   
+## Check for outliers
+
+est.n.graph.split <- split(est.n.graph, list(est.n.graph$n_obs, est.n.graph$coef.type, est.n.graph$model))
+est.n.graph.split <- lapply(est.n.graph.split, transform, outlier = is.extreme.Fun(coef))
+est.n.graph <- unsplit(est.n.graph.split,list(est.n.graph$n_obs, est.n.graph$coef.type, est.n.graph$model))
+est.n.graph[which(est.n.graph$outlier),c("coef")] <- NA
+
+## Histogram without outlier
+
+hist.coef.n <- ggplot(data=est.n.graph, aes(x=coef)) +
+  geom_histogram(color="black", fill="grey",binwidth = function(x) 2 * IQR(x) / (length(x)^(1/3)),na.rm=T) + #Freedman-Diaconis Rule for binwidth
+  labs(x="",y="f")
+
+hist.coef.n %+% subset(est.n.graph, coef.type %in% "widehat(lambda)[1]") +
+  facet_grid(n_obs~model) +
+  geom_vline(data=subset(est.n.agg.graph, coef.type %in% "widehat(lambda)[1]"), aes(xintercept=coef),
+             size=1, linetype="dashed") +
+  labs(x=bquote(widehat(lambda)[1]))
+
+
+```
+*Note*. Based on 5000 simulation runs. QR estimates are based on the difference in regression coefficients for the second and third quartiles. Extreme outliers for the two-step estimator are excluded from the plot.
+
+## Scenario 2 & Scenario 3
+
+Table \@ref(tab:tab_s2) shows that all variance-based methods have biased estimates for data generation processes with multiplicative effects on the location and scale part of the model (Scenario 2) with smaller sample sizes. For $n=30$, the Two-Step and ML methods each show a bias for $λ_X$ of about ±0.05, which is one-tenth of the true value of 0.5. For $n = 50$, the bias remains at -0.023 (0.003) and 0.027 (0.002). Thus, there is systematic underestimation (Two-Step) and overestimation (ML) of the effect size of $X$ in small datasets. Additionally, the ML method displays notably high empirical standard errors for point estimators compared to other methods.
+
+```{r tab_s2, echo=FALSE, results='asis', warning = FALSE}
+
+# Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
+
+estimands <- c("lambda_0","lambda_1","lambda_2","lambda_3") 
+method <- c("Two-Step", "ML","REML")
+perform <- c("bias", "empse", "cover")
+
+### Rsimsum tables for n = 30
+
+ms.summ.30 <- readRDS(here("data/S6_Exp_ms_summ_30.rds"))
+ms.summ.30$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.30$est, digits=3), round(ms.summ.30$mcse, digits=3))
+# ms.summ.30[] <- lapply(ms.summ.30, as.character)
+
+ms.summ.30 <-  subset(ms.summ.30, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse","cover")
+names(perform) <- c("Bias of point estimates, n = 30",
+               "Empirical SE of point estimates, n = 30",
+               "Coverage rate of 95%-interval, n = 30")
+
+ms.table.30 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.30[ms.summ.30[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c("","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
+  colnames(table) <- c("","",estimands)
+  return(var=table)
+})
+
+### Rsimsum tables for n = 50
+
+ms.summ.50 <- readRDS(here("data/S6_Exp_ms_summ_50.rds"))
+ms.summ.50$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.50$est, digits=3), round(ms.summ.50$mcse, digits=3))
+# ms.summ.50[] <- lapply(ms.summ.50, as.character)
+
+ms.summ.50 <-  subset(ms.summ.50, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse","cover")
+names(perform) <- c("Bias of point estimates, n = 50",
+               "Empirical SE of point estimates, n = 50",
+               "Coverage rate of 95%-interval, n = 50")
+
+ms.table.50 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.50[ms.summ.50[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c("","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
+  colnames(table) <- c("","",estimands)
+  return(var=table)
+})
+
+simsumtable.1 <- rbind(do.call(rbind, ms.table.30), do.call(rbind, ms.table.50))
+
+kable(simsumtable.1, 
+     caption = "Performance of VFR point estimates for exponential variance for $n = 30$ & $n = 50$",
+     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_ZX$"),
+     format = "html", align = c("l", "l", "c", "c","c","c"), row.names = FALSE) |> 
+kable_classic(full_width = F, html_font = "Cambria")
+```
+*Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
+
+Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of λ_x and λ_z. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function λ_0 are still biased (Table \@ref(tab:tab_s2_1000)).
+
+```{r tab_s2_1000, echo=FALSE, results='asis', warning = FALSE}
+### Rsimsum tables for n = 1000
+
+ms.summ.1000 <- readRDS(here("data/S6_Exp_ms_summ_1000.rds"))
+ms.summ.1000$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.1000$est, digits=3), round(ms.summ.1000$mcse, digits=3))
+# ms.summ.1000[] <- lapply(ms.summ.1000, as.character)
+
+ms.summ.1000 <-  subset(ms.summ.1000, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse","cover")
+names(perform) <- c("Bias of point estimates, n = 1000",
+               "Empirical SE of point estimates, n = 1000",
+               "Coverage rate of 95%-interval, n = 1000")
+
+ms.table.1000 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.1000[ms.summ.1000[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c(NA,NA,NA),table)
+  table <- rbind(c(var,NA,NA,NA,NA,NA), table)
+  colnames(table) <- c("","",estimands)
+  return(var=table)
+})
+
+simsumtable.2 <- do.call(rbind, ms.table.1000)
+
+kable(simsumtable.2, 
+     caption = "Performance of VFR point estimates for exponential variance for $n = 1000$",
+     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_ZX$"),
+     format = "html", align = c("l", "l", "c", "c","c","c"), row.names = FALSE) |> 
+kable_classic(full_width = F, html_font = "Cambria")
+
+```
+*Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
+
+Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes  (Table \@ref(tab:tab_s3)). However, the power for identifying any of the effects is also below 10% for both n=30 and n=50. Additionally, the estimates of Δ_τ (β_z) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for n=1000. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for λ_z respectively the difference in Δ_τ (β_z) could be attributed to it being the estimate for the effect of Z for X=0, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.
+
+
+```{r tab_s3, echo=FALSE, results='asis', warning = FALSE}
+
+# Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
+
+estimands <- c("x","xx","z", "xz")
+names(estimands) <- c("beta_1", "beta_2", "beta_3", "beta_4")
+
+### self calculated values for n = 30
+
+est.agg.30 <- readRDS(here("data/S7_Lin_est_agg_long_30.rds"))
+est.agg.30$model <- "QR"
+
+est.agg.30 <- subset(est.agg.30, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+est.agg.30$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.30$reject, digits=3), round(est.agg.30$rejection_mcse, digits=3))
+
+perform <- c("reject")
+names(perform) <- c("$H_0$ rejection rate , n = 30")
+
+
+
+est.table.30 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.agg.30[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",names(estimands))  
+  return(var=table)
+})
+
+### Rsimsum tables for n = 30
+ms.summ.30<- readRDS(here("data/S7_Lin_diff_ms_summ_30.rds"))
+ms.summ.30$model <- "QR"
+
+
+ms.summ.30$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.30$est, digits=3), round(ms.summ.30$mcse, digits=3))
+
+ms.summ.30 <-  subset(ms.summ.30, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse")
+names(perform) <- c("Bias of point estimates, n = 30",
+               "Empirical SE of point estimates, n = 30")
+
+ms.table.30 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.30[ms.summ.30[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","","","",""), table)
+  colnames(table) <- c("","",names(estimands))
+  return(var=table)
+})
+
+### self calculated values for n = 50
+
+est.agg.50 <- readRDS(here("data/S7_Lin_est_agg_long_50.rds"))
+
+est.agg.50$rejection_mcse <- sqrt((est.agg.50$p*(1-est.agg.50$p)/2000))
+est.agg.50$model <- "QR"
+
+est.agg.50 <- subset(est.agg.50, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+est.agg.50$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.50$reject, digits=3), round(est.agg.50$rejection_mcse, digits=3))
+
+perform <- c("reject")
+names(perform) <- c("$H_0$ rejection rate , n = 50")
+
+
+
+est.table.50 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.agg.50[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",names(estimands))  
+  return(var=table)
+})
+
+### Rsimsum tables for n = 50
+ms.summ.50<- readRDS(here("data/S7_Lin_diff_ms_summ_50.rds"))
+ms.summ.50$model <- "QR"
+
+
+ms.summ.50$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.50$est, digits=3), round(ms.summ.50$mcse, digits=3))
+
+ms.summ.50 <- subset(ms.summ.50, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse")
+names(perform) <- c("Bias of point estimates, n = 50",
+               "Empirical SE of point estimates, n = 50")
+
+ms.table.50 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.50[ms.summ.50[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","","","",""), table)
+  colnames(table) <- c("","",names(estimands))
+  return(var=table)
+})
+
+
+
+### self calculated values for n = 1000
+
+est.agg.1000 <- readRDS(here("data/S7_Lin_est_agg_long_1000.rds"))
+est.agg.1000$model <- "QR"
+
+est.agg.1000 <- subset(est.agg.1000, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+est.agg.1000$rejection_mcse <- sqrt((est.agg.1000$p*(1-est.agg.1000$p)/2000))
+
+
+est.agg.1000$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.1000$reject, digits=3), round(est.agg.1000$rejection_mcse, digits=3))
+
+perform <- c("reject")
+names(perform) <- c("$H_0$ rejection rate , n = 1000")
+
+
+
+est.table.1000 <- lapply(names(perform), function(var){
+  sub <- c("model","coef.type",perform[var])
+  table <- reshape(est.agg.1000[,sub], direction="wide",
+          idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","",""), table)
+   colnames(table) <- c("","",names(estimands))  
+  return(var=table)
+})
+
+### Rsimsum tables for n = 1000
+ms.summ.1000<- readRDS(here("data/S7_Lin_diff_ms_summ_1000.rds"))
+ms.summ.1000$model <- "QR"
+
+
+ms.summ.1000$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.1000$est, digits=3), round(ms.summ.1000$mcse, digits=3))
+
+ms.summ.1000 <- subset(ms.summ.1000, coef.type %in% estimands) %>%
+    mutate(coef.type =  factor(coef.type, levels = estimands)) %>%
+    arrange(coef.type)
+
+perform <- c("bias","empse")
+names(perform) <- c("Bias of point estimates, n = 1000",
+               "Empirical SE of point estimates, n = 1000")
+
+ms.table.1000 <- lapply(names(perform), function(var){
+  table <- reshape(ms.summ.1000[ms.summ.1000[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
+                   idvar="model", timevar ="coef.type")
+  table <- cbind(c(""),table)
+  table <- rbind(c(var,"","","","","","",""), table)
+  colnames(table) <- c("","",names(estimands))
+  return(var=table)
+})
+
+simsumtable.1 <- rbind(do.call(rbind, ms.table.30), do.call(rbind, est.table.30),
+                       do.call(rbind, ms.table.50), do.call(rbind, est.table.50),
+                       do.call(rbind, ms.table.1000), do.call(rbind, est.table.1000))
+
+kable(simsumtable.1, 
+     caption = "Performance of VFR point estimates for exponential variance for $n = 1000$",
+     col.names = c("","","$\\Delta(\\beta_X)$","$\\Delta(\\beta_{XX})$","$\\Delta(\\beta_Z)$","$\\Delta(\\beta_{XZ})$"),
+     format = "html", align = c("l", "l", "c", "c","c","c"), row.names = FALSE) |> 
+kable_classic(full_width = F, html_font = "Cambria")
+```
+*Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
+
+## Conclusion
+
+In conclusion, our simulation study demonstrates that none of the discussed methods are reliable for sample sizes of 30, and only REML and QR should be used for a sample size of 50. However, the power of QR is limited for this sample size in our scenarios, and more complex relationships have to be analyzed with large sample sizes or Bayesian methods that incorporate previous knowledge of researchers to allow more precise estimates in small samples (Leonard, 1975; Yu & Moyeed, 2001; Western & Bloome, 2009). In addition, QR proves robust not just against outliers but also against the misspecification of the location model, while the variance function regression misidentifies the unmodelled quadratic effect on the expectation as an effect on the variance. 
+
+# References
+
+- Aitkin, M. (1987). Modelling variance heterogeneity in normal regression using GLIM. *Journal of the Royal Statistical Society: Series C (Applied Statistics)*, 36(3), 332–339. https://doi.org/10.2307/2347792
+- Bellio, R., & Coletto, M. (2016). Simple outlier labeling based on quantile regression, with application to the steelmaking process. *Applied Stochastic Models in Business and Industry*, 32(2), 228–242. https://doi.org/10.1002/asmb.2146
+- Cheng, T.-C. (2012). On simultaneously identifying outliers and heteroscedasticity without specific form. *Computational Statistics & Data Analysis*, 56(7), 2258–2272. https://doi.org/10.1016/j.csda.2012.01.004
+- Culpepper, S. A. (2010). Studying individual differences in predictability with gamma regression and nonlinear multilevel models. *Multivariate Behavioral Research*, 45(1), 153–185. https://doi.org/10.1080/00273170903504885
+- Dunn, P. K., & Smyth, G. K. (2018). *Generalized linear models with examples in R*. Springer New York. https://doi.org/10.1007/978-1-4419-0118-7
+- Gasparini, A. (2018). rsimsum: Summarise results from Monte Carlo simulation studies. *Journal of Open Source Software*, 3(26), 739. https://doi.org/10.21105/joss.00739
+- Geraci, M., & Bottai, M. (2014). Linear quantile mixed models. *Statistics and Computing*, 24(3), 461–479. https://doi.org/10.1007/s11222-013-9381-9
+- Huber, M., & Melly, B. (2011). Quantile regression in the presence of sample selection. In *Economics Working Paper Series* (1109; Economics Working Paper Series). University of St. Gallen, School of Economics and Political Science. https://ideas.repec.org/p/usg/econwp/201109.html
+- Koenker, R. (2005a). *Quantile Regression*. Cambridge University Press. https://doi.org/10.1017/CBO9780511754098
+- Koenker, R., & Bassett Jr, G. (1978). Regression quantiles. *Econometrica*, 46(1), 33–50.
+- Killewald, A., & Bearak, J. (2014). Is the motherhood penalty larger for low-wage women? A comment on quantile regression. *American Sociological Review*, 79(2), 350–357. https://doi.org/10.1177/0003122414524574
+- Marino, M. F., & Farcomeni, A. (2015). Linear quantile regression models for longitudinal experiments: An overview. *METRON*, 73(2), 229–247. https://doi.org/10.1007/s40300-015-0072-5
+- McCullagh, P., & Nelder, J. A. (1989). *Generalized linear models* (2nd ed.). Chapman & Hall.
+- Morris, T. P., White, I. R., & Crowther, M. J. (2019). Using simulation studies to evaluate statistical methods. *Statistics in Medicine*, 38(11), 2074–2102. https://doi.org/10.1002/sim.8086
+- Sawilowsky, S. S. (2003). You think you’ve got trivials? *Journal of Modern Applied Statistical Methods*, 2(1), 218–225. https://doi.org/10.22237/jmasm/1051748460
+- Verbyla, A. P. (1993). Modelling variance heterogeneity: Residual maximum likelihood and diagnostics. *Journal of the Royal Statistical Society: Series B (Methodological)*, 55(2), 493–508.
+- Western, B., & Bloome, D. (2009). Variance function regressions for studying inequality. *Sociological Methodology*, 39(1), 263–326. https://doi.org/10.1111/j.1467-9531.2009.01222.x
+- Willke, R. J., Zheng, Z., Subedi, P., Althin, R., & Mullins, C. D. (2012). From concepts, theory, and evidence of heterogeneity of treatment effects to methodological approaches: A primer. *BMC Medical Research Methodology*, 12(1), 185. https://doi.org/10.1186/1471-2288-12-185
+- Yang, F. (2019). Modeling and estimating unpredictability with applications in political economy [Master's thesis, UCLA]. https://escholarship.org/uc/item/6595x2kh
