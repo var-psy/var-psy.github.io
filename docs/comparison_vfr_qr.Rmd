@@ -72,9 +72,9 @@ The models were estimated in R with `lm()` and `glm()` for the two-step method, 
 
 ## Scenario 1
 
-Focusing on the rejection rates for the null hypotheses that there is no effect of $X$ on the dispersion of $Y$, it is obvious that the two-step estimator is behaving surprisingly well but otherwise the variance function regression is identifying the quadratic location effect as a dispersion effect (Table \@ref(tab:tab_s1)). Furthermore, in the second stage of the Two-Step method, the gamma GLM was unable to provide any estimators for a significant percentage of the simulated datasets with small sample sizes. Therefore, the good performance measures should not be overinterpreted. With a sample size of $n = 30$, the Type I error of the REML method is 87.9% (0.5%), even higher than that of the ML method at 85.0% (0.5%). QR proves very robust even under misspecification, having only slightly higher than nominal rejection rates (6%) for $n=50$ and $n=1000$. However, it becomes clear here that misspecification of the functional term leads to significant inference problems in variance function regression, in addition to biases in the mean model.
+Focusing on the rejection rates for the null hypotheses that there is no effect of $X$ on the dispersion of $Y$, it is obvious that the two-step estimator is behaving surprisingly well but otherwise the variance function regression is identifying the quadratic location effect as a dispersion effect (Table \@ref(tab:tab-s1)). Furthermore, in the second stage of the Two-Step method, the gamma GLM was unable to provide any estimators for a significant percentage of the simulated datasets with small sample sizes. Therefore, the good performance measures should not be overinterpreted. With a sample size of $n = 30$, the Type I error of the REML method is 87.9% (0.5%), even higher than that of the ML method at 85.0% (0.5%). QR proves very robust even under misspecification, having only slightly higher than nominal rejection rates (6%) for $n=50$ and $n=1000$. However, it becomes clear here that misspecification of the functional term leads to significant inference problems in variance function regression, in addition to biases in the mean model.
 
-```{r tab_s1, echo=FALSE, warning=FALSE, results='asis'}
+```{r tab-s1, echo=FALSE, warning=FALSE, results='asis'}
 
 # Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
 
@@ -156,7 +156,7 @@ est.table.1000 <- lapply(names(perform), function(var){
 Why are the variance function regression Type I error rates so high, even though the estimates are on average not strongly biased (not shown)? Figure \@ref(fig:hist-s1) demonstrates that going beyond the mean can also be important for methodological studies. The ML and REML estimates are bimodally distributed if the quadratic relationship for the location model is ignored. The estimates spread around approximately +1 and -1, leading to no bias on average but resulting in entirely unreliable results. However, the distributions of the QR estimators also show heavier tails, which may lead to the incorrect assumption of a strong effect in the unlikely event of rejecting a false null hypothesis. Nonetheless, this risk is significantly lower than with the bimodal distribution of the estimators in variance function regression, and QR was able to provide estimates in all cases.
 
 
-```{r hist-s1, fig.cap ="Histogram of estimates given a misspecified mean model", fig.topcaption = TRUE, echo=FALSE, results='asis', warning = FALSE, dpi=150, fig.width = 4.5,  fig.height = 3.5}
+```{r hist-s1, fig.cap ="Histogram of estimates given a misspecified mean model", fig.topcaption = TRUE, echo=FALSE, results='asis', warning = FALSE, fig.align='center'}
 
 
 
@@ -234,9 +234,9 @@ hist.coef.n %+% subset(est.n.graph, coef.type %in% "widehat(lambda)[1]") +
 
 ## Scenario 2 & Scenario 3
 
-Table \@ref(tab:tab_s2) shows that all variance-based methods have biased estimates for data generation processes with multiplicative effects on the location and scale part of the model (Scenario 2) with smaller sample sizes. For $n=30$, the Two-Step and ML methods each show a bias for $λ_X$ of about ±0.05, which is one-tenth of the true value of 0.5. For $n = 50$, the bias remains at -0.023 (0.003) and 0.027 (0.002). Thus, there is systematic underestimation (Two-Step) and overestimation (ML) of the effect size of $X$ in small datasets. Additionally, the ML method displays notably high empirical standard errors for point estimators compared to other methods.
+Table \@ref(tab:tab-s2) shows that all variance-based methods have biased estimates for data generation processes with multiplicative effects on the location and scale part of the model (Scenario 2) with smaller sample sizes. For $n=30$, the Two-Step and ML methods each show a bias for $λ_X$ of about ±0.05, which is one-tenth of the true value of 0.5. For $n = 50$, the bias remains at -0.023 (0.003) and 0.027 (0.002). Thus, there is systematic underestimation (Two-Step) and overestimation (ML) of the effect size of $X$ in small datasets. Additionally, the ML method displays notably high empirical standard errors for point estimators compared to other methods.
 
-```{r tab_s2, echo=FALSE, results='asis', warning = FALSE}
+```{r tab-s2, echo=FALSE, results='asis', warning = FALSE}
 
 # Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
 
@@ -302,9 +302,9 @@ kable_classic(full_width = F, html_font = "Cambria")
 ```
 *Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
 
-Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of λ_x and λ_z. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function λ_0 are still biased (Table \@ref(tab:tab_s2_1000)).
+Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of λ_x and λ_z. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function λ_0 are still biased (Table \@ref(tab:tab-s2_1000)).
 
-```{r tab_s2_1000, echo=FALSE, results='asis', warning = FALSE}
+```{r tab-s2_1000, echo=FALSE, results='asis', warning = FALSE}
 ### Rsimsum tables for n = 1000
 
 ms.summ.1000 <- readRDS(here("data/S6_Exp_ms_summ_1000.rds"))
@@ -323,8 +323,8 @@ names(perform) <- c("Bias of point estimates, n = 1000",
 ms.table.1000 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.1000[ms.summ.1000[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
                    idvar="model", timevar ="coef.type")
-  table <- cbind(c(NA,NA,NA),table)
-  table <- rbind(c(var,NA,NA,NA,NA,NA), table)
+  table <- cbind(c("","",""),table)
+  table <- rbind(c(var,"","","","",""), table)
   colnames(table) <- c("","",estimands)
   return(var=table)
 })
@@ -340,10 +340,10 @@ kable_classic(full_width = F, html_font = "Cambria")
 ```
 *Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
 
-Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes  (Table \@ref(tab:tab_s3)). However, the power for identifying any of the effects is also below 10% for both n=30 and n=50. Additionally, the estimates of Δ_τ (β_z) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for n=1000. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for λ_z respectively the difference in Δ_τ (β_z) could be attributed to it being the estimate for the effect of Z for X=0, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.
+Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes  (Table \@ref(tab:tab-s3)). However, the power for identifying any of the effects is also below 10% for both n=30 and n=50. Additionally, the estimates of Δ_τ (β_z) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for n=1000. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for λ_z respectively the difference in Δ_τ (β_z) could be attributed to it being the estimate for the effect of Z for X=0, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.
 
 
-```{r tab_s3, echo=FALSE, results='asis', warning = FALSE}
+```{r tab-s3, echo=FALSE, results='asis', warning = FALSE}
 
 # Sys.setlocale("LC_NUMERIC","de_DE") # change for Linux; doesn't work in Windows
 
@@ -536,6 +536,7 @@ In conclusion, our simulation study demonstrates that none of the discussed meth
 - Koenker, R. (2005a). *Quantile Regression*. Cambridge University Press. https://doi.org/10.1017/CBO9780511754098
 - Koenker, R., & Bassett Jr, G. (1978). Regression quantiles. *Econometrica*, 46(1), 33–50.
 - Killewald, A., & Bearak, J. (2014). Is the motherhood penalty larger for low-wage women? A comment on quantile regression. *American Sociological Review*, 79(2), 350–357. https://doi.org/10.1177/0003122414524574
+- Leonard, T. (1975). A Bayesian approach to the linear model with unequal variances. *Technometrics*, 17(1), 95–102.
 - Marino, M. F., & Farcomeni, A. (2015). Linear quantile regression models for longitudinal experiments: An overview. *METRON*, 73(2), 229–247. https://doi.org/10.1007/s40300-015-0072-5
 - McCullagh, P., & Nelder, J. A. (1989). *Generalized linear models* (2nd ed.). Chapman & Hall.
 - Morris, T. P., White, I. R., & Crowther, M. J. (2019). Using simulation studies to evaluate statistical methods. *Statistics in Medicine*, 38(11), 2074–2102. https://doi.org/10.1002/sim.8086
@@ -544,3 +545,4 @@ In conclusion, our simulation study demonstrates that none of the discussed meth
 - Western, B., & Bloome, D. (2009). Variance function regressions for studying inequality. *Sociological Methodology*, 39(1), 263–326. https://doi.org/10.1111/j.1467-9531.2009.01222.x
 - Willke, R. J., Zheng, Z., Subedi, P., Althin, R., & Mullins, C. D. (2012). From concepts, theory, and evidence of heterogeneity of treatment effects to methodological approaches: A primer. *BMC Medical Research Methodology*, 12(1), 185. https://doi.org/10.1186/1471-2288-12-185
 - Yang, F. (2019). Modeling and estimating unpredictability with applications in political economy [Master's thesis, UCLA]. https://escholarship.org/uc/item/6595x2kh
+- Yu, K., & Moyeed, R. A. (2001). Bayesian quantile regression. *Statistics & Probability Letters*, 54(4), 437–447.
