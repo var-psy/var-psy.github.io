@@ -46,7 +46,7 @@ This study examines how these methods perform in analyzing differences in condit
 
 This Monte-Carlo experiment aims to analyze the performance of the two-step approach with gamma regression for the squared residuals, VFR with ML and REML estimation, and QR in scenarios that are often encountered by empirical researchers in the behavioral sciences. Small-sample bias is a key concern, as sample sizes in behavioral science research, including regions and individuals, are often limited. Since some experiments and larger survey-based studies include a large number of respondents, the consistency of the estimated parameters and their large-sample bias is still of interest. Complex and sometimes unknown functional forms of relationships, in addition to outliers, are also often encountered issues.
 
-To achieve this, we defined among others the following scenarios. Given $X \sim U(1,10)$ and $Z \sim B(n_{\text{obs}}; 0.5)$, the true data generation processes of $Y$ are as follows.
+To achieve this, we defined among others the following scenarios. Given $X \sim U(1,10)$ and $Z \sim Bern(0.5)$, the true data generation processes of $Y$ are as follows.
 
 *Scenario 1*: The variance is constant, but the expectation depends non-linearly on $X$:
 $$Y_i = 0.5 + 0.5x_i + x_i^2 + 1 \epsilon_i \text{ with } \epsilon_i \sim N(0,1)$$
@@ -296,15 +296,15 @@ simsumtable.1 <- rbind(do.call(rbind, ms.table.30), do.call(rbind, ms.table.50))
 
 kable(simsumtable.1, 
      caption = "Performance of VFR point estimates for exponential variance for $n = 30$ & $n = 50$",
-     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_ZX$"),
+     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_{XZ}$"),
      format = "html", align = c("l", "l", "c", "c","c","c"), row.names = FALSE) |> 
 kable_classic(full_width = F, html_font = "Cambria")
 ```
 *Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
 
-Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of λ_x and λ_z. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function λ_0 are still biased (Table \@ref(tab:tab-s2_1000)).
+Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of $λ_x$ and $λ_z$. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function $λ_0$ are still biased (Table \@ref(tab:tab-s2-1000)).
 
-```{r tab-s2_1000, echo=FALSE, results='asis', warning = FALSE}
+```{r tab-s2-1000, echo=FALSE, results='asis', warning = FALSE}
 ### Rsimsum tables for n = 1000
 
 ms.summ.1000 <- readRDS(here("data/S6_Exp_ms_summ_1000.rds"))
@@ -333,14 +333,14 @@ simsumtable.2 <- do.call(rbind, ms.table.1000)
 
 kable(simsumtable.2, 
      caption = "Performance of VFR point estimates for exponential variance for $n = 1000$",
-     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_ZX$"),
+     col.names = c("","","$\\lambda_0$","$\\lambda_X$","$\\lambda_Z$","$\\lambda_{XZ}$"),
      format = "html", align = c("l", "l", "c", "c","c","c"), row.names = FALSE) |> 
 kable_classic(full_width = F, html_font = "Cambria")
 
 ```
 *Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
 
-Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes  (Table \@ref(tab:tab-s3)). However, the power for identifying any of the effects is also below 10% for both n=30 and n=50. Additionally, the estimates of Δ_τ (β_z) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for n=1000. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for λ_z respectively the difference in Δ_τ (β_z) could be attributed to it being the estimate for the effect of Z for X=0, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.
+Similarly, the difference of the QR coefficient estimates is biased for the small sample sizes  (Table \@ref(tab:tab-s3)). However, the power for identifying any of the effects is also below 10% for both $n=30$ and $n=50$. Additionally, the estimates of $Δ_τ$ ($β_Z$) have a particularly high small sample bias, and have very high empirical standard errors and low rejection rates even for $n=1000$. That the empirical SE is larger than in the methods used in Scenario 2 is not particularly meaningful due to the different size of the true parameters. In both scenarios, the high uncertainty and bias for $λ_Z$ respectively the difference in $Δ_τ$ ($β_Z$) could be attributed to it being the estimate for the effect of $Z$ for $X=0$, which is outside the range of the observations. Otherwise, the difference in regression quantiles is unbiased for a sample size of 1000 and the power to identify the interaction effect on the dispersion is very high (0.988). Overall, it is evident that QR performs well only with larger datasets under the given scenario. Otherwise, the uncertainty is quite significant.
 
 
 ```{r tab-s3, echo=FALSE, results='asis', warning = FALSE}
