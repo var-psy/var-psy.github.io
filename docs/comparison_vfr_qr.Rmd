@@ -88,13 +88,14 @@ est.30.agg <- subset(est.30.agg, coef.type %in% estimands)
 
 est.30.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.30.agg$reject, digits=3), round(est.30.agg$rejection_mcse, digits=3))
 
-names(perform) <- c("$H_0$ rejection rate , n = 30")
+names(perform) <- c("$H_0$ rejection rate, $n = 30$")
 
 est.table.30 <- lapply(names(perform), function(var){
   sub <- c("model","coef.type",perform[var])
   table <- reshape(est.30.agg[,sub], direction="wide",
           idvar="model", timevar ="coef.type")
   table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- as.matrix(table)
   table <- cbind(c("","","",""),table)
   table <- rbind(c(var,"","","","",""), table)
    colnames(table) <- c("","",estimands)  
@@ -109,13 +110,14 @@ est.50.agg <- subset(est.50.agg, coef.type %in% estimands)
 
 est.50.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.50.agg$reject, digits=3), round(est.50.agg$rejection_mcse, digits=3))
 
-names(perform) <- c("$H_0$ rejection rate , n = 50")
+names(perform) <- c("$H_0$ rejection rate, $n = 50$")
 
 est.table.50 <- lapply(names(perform), function(var){
   sub <- c("model","coef.type",perform[var])
   table <- reshape(est.50.agg[,sub], direction="wide",
           idvar="model", timevar ="coef.type")
   table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- as.matrix(table)
   table <- cbind(c("","","",""),table)
   table <- rbind(c(var,"","","","",""), table)
    colnames(table) <- c("","",estimands)
@@ -130,13 +132,14 @@ est.1000.agg <- subset(est.1000.agg, coef.type %in% estimands)
 
 est.1000.agg$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.1000.agg$reject, digits=3), round(est.1000.agg$rejection_mcse, digits=3))
 
-names(perform) <- c("$H_0$ rejection rate , n = 1000")
+names(perform) <- c("$H_0$ rejection rate, $n = 1000$")
 
 est.table.1000 <- lapply(names(perform), function(var){
   sub <- c("model","coef.type",perform[var])
   table <- reshape(est.1000.agg[,sub], direction="wide",
           idvar="model", timevar ="coef.type")
   table <- table[order(factor(table$model, levels = c("Two-Step", "ML","REML", "QR"))),]
+  table <- as.matrix(table)
   table <- cbind(c("","","",""),table)
   table <- rbind(c(var,"","","","",""), table)
    colnames(table) <- c("","",estimands)
@@ -225,7 +228,7 @@ hist.coef.n <- ggplot(data=est.n.graph, aes(x=coef)) +
 hist.coef.n %+% subset(est.n.graph, coef.type %in% "widehat(lambda)[1]") +
   facet_grid(n_obs~model) +
   geom_vline(data=subset(est.n.agg.graph, coef.type %in% "widehat(lambda)[1]"), aes(xintercept=coef),
-             size=1, linetype="dashed") +
+             linewidth=1, linetype="dashed") +
   labs(x=bquote(widehat(lambda)[1]))
 
 
@@ -255,13 +258,14 @@ ms.summ.30 <-  subset(ms.summ.30, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse","cover")
-names(perform) <- c("Bias of point estimates, n = 30",
-               "Empirical SE of point estimates, n = 30",
-               "Coverage rate of 95%-interval, n = 30")
+names(perform) <- c("Bias of point estimates, $n = 30$",
+               "Empirical SE of point estimates, $n = 30$",
+               "Coverage rate of 95%-interval, $n = 30$")
 
 ms.table.30 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.30[ms.summ.30[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
                    idvar="model", timevar ="coef.type")
+  table <- as.matrix(table)
   table <- cbind(c("","",""),table)
   table <- rbind(c(var,"","","","",""), table)
   colnames(table) <- c("","",estimands)
@@ -279,13 +283,14 @@ ms.summ.50 <-  subset(ms.summ.50, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse","cover")
-names(perform) <- c("Bias of point estimates, n = 50",
-               "Empirical SE of point estimates, n = 50",
-               "Coverage rate of 95%-interval, n = 50")
+names(perform) <- c("Bias of point estimates, $n = 50$",
+               "Empirical SE of point estimates, $n = 50$",
+               "Coverage rate of 95%-interval, $n = 50$")
 
 ms.table.50 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.50[ms.summ.50[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
-                   idvar="model", timevar ="coef.type")
+                   idvar="model", timevar ="coef.type")#
+  table <- as.matrix(table)
   table <- cbind(c("","",""),table)
   table <- rbind(c(var,"","","","",""), table)
   colnames(table) <- c("","",estimands)
@@ -302,10 +307,14 @@ kable_classic(full_width = F, html_font = "Cambria")
 ```
 *Note*. Based on 5000 simulation runs. Monte-Carlo standard errors reported in brackets.
 
-Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of $λ_x$ and $λ_z$. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function $λ_0$ are still biased (Table \@ref(tab:tab-s2-1000)).
+Only REML estimators are close to the nominal coverage rate of 95% confidence intervals for a sample size of 50, but still have biased estimates of $λ_X$ and $λ_Z$. For a large sample of 1000 observations, all methods reach nominal coverage rates, but the two-step estimate of λ_zand the ML estimate for the intercept of the variance function $λ_0$ are still biased (Table \@ref(tab:tab-s2-1000)).
 
 ```{r tab-s2-1000, echo=FALSE, results='asis', warning = FALSE}
 ### Rsimsum tables for n = 1000
+
+estimands <- c("lambda_0","lambda_1","lambda_2","lambda_3") 
+method <- c("Two-Step", "ML","REML")
+perform <- c("bias", "empse", "cover")
 
 ms.summ.1000 <- readRDS(here("data/S6_Exp_ms_summ_1000.rds"))
 ms.summ.1000$est_mcse <- sprintf("%0.3f\\\n(%0.3f)", round(ms.summ.1000$est, digits=3), round(ms.summ.1000$mcse, digits=3))
@@ -316,13 +325,14 @@ ms.summ.1000 <-  subset(ms.summ.1000, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse","cover")
-names(perform) <- c("Bias of point estimates, n = 1000",
-               "Empirical SE of point estimates, n = 1000",
-               "Coverage rate of 95%-interval, n = 1000")
+names(perform) <- c("Bias of point estimates, $n = 1000$",
+               "Empirical SE of point estimates, $n = 1000$",
+               "Coverage rate of 95%-interval, $n = 1000$")
 
 ms.table.1000 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.1000[ms.summ.1000[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
                    idvar="model", timevar ="coef.type")
+  table <- as.matrix(table)
   table <- cbind(c("","",""),table)
   table <- rbind(c(var,"","","","",""), table)
   colnames(table) <- c("","",estimands)
@@ -362,7 +372,7 @@ est.agg.30 <- subset(est.agg.30, coef.type %in% estimands) %>%
 est.agg.30$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.30$reject, digits=3), round(est.agg.30$rejection_mcse, digits=3))
 
 perform <- c("reject")
-names(perform) <- c("$H_0$ rejection rate , n = 30")
+names(perform) <- c("$H_0$ rejection rate, $n = 30$")
 
 
 
@@ -388,8 +398,8 @@ ms.summ.30 <-  subset(ms.summ.30, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse")
-names(perform) <- c("Bias of point estimates, n = 30",
-               "Empirical SE of point estimates, n = 30")
+names(perform) <- c("Bias of point estimates, $n = 30$",
+               "Empirical SE of point estimates, $n = 30$")
 
 ms.table.30 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.30[ms.summ.30[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
@@ -414,7 +424,7 @@ est.agg.50 <- subset(est.agg.50, coef.type %in% estimands) %>%
 est.agg.50$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.50$reject, digits=3), round(est.agg.50$rejection_mcse, digits=3))
 
 perform <- c("reject")
-names(perform) <- c("$H_0$ rejection rate , n = 50")
+names(perform) <- c("$H_0$ rejection rate, $n = 50$")
 
 
 
@@ -440,8 +450,8 @@ ms.summ.50 <- subset(ms.summ.50, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse")
-names(perform) <- c("Bias of point estimates, n = 50",
-               "Empirical SE of point estimates, n = 50")
+names(perform) <- c("Bias of point estimates, $n = 50$",
+               "Empirical SE of point estimates, $n = 50$")
 
 ms.table.50 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.50[ms.summ.50[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
@@ -469,7 +479,7 @@ est.agg.1000$rejection_mcse <- sqrt((est.agg.1000$p*(1-est.agg.1000$p)/2000))
 est.agg.1000$reject <- sprintf("%0.3f\\\n(%0.3f)", round(est.agg.1000$reject, digits=3), round(est.agg.1000$rejection_mcse, digits=3))
 
 perform <- c("reject")
-names(perform) <- c("$H_0$ rejection rate , n = 1000")
+names(perform) <- c("$H_0$ rejection rate, $n = 1000$")
 
 
 
@@ -495,8 +505,8 @@ ms.summ.1000 <- subset(ms.summ.1000, coef.type %in% estimands) %>%
     arrange(coef.type)
 
 perform <- c("bias","empse")
-names(perform) <- c("Bias of point estimates, n = 1000",
-               "Empirical SE of point estimates, n = 1000")
+names(perform) <- c("Bias of point estimates, $n = 1000$",
+               "Empirical SE of point estimates, $n = 1000$")
 
 ms.table.1000 <- lapply(names(perform), function(var){
   table <- reshape(ms.summ.1000[ms.summ.1000[,"stat"]==perform[var],c("model","coef.type","est_mcse")], direction="wide",
