@@ -464,6 +464,29 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
 
 
 
@@ -570,11 +593,11 @@ display: none;
 
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
-<p>We conducted a Monte-Carlo simulation study (Sawilowsky, 2003) to evaluate and demonstrate some advantages and disadvantages of the two-step method, the maximum likelihood (ML) and restricted maximum likelihood (REML) variance function regression (VFR), and quantile regression (QR).</p>
-<p>Western &amp; Bloome (2009) give an extended exposition on using variance function regressions to model substantial differences in variance as indicators of differential inequality. Most approaches model the conditional expectation of the squared residuals <span class="math inline">\(\epsilon_i^2\)</span> of a conditional mean model as a function of predictors <span class="math inline">\(Z_i\)</span>​. In the most simple two-step model, the variance of the residuals can be expressed as the expectation of the squared residuals: <span class="math inline">\(\text{Var}(\epsilon_i) = E(\epsilon_i^2) - E(\epsilon_i)^2 = E(\epsilon_i^2)\)</span>, and the conditional variance is modeled as: <span class="math inline">\(\text{Var}(Y_i \mid Z_i) = E(\epsilon_i^2 \mid Z_i) = \lambda \cdot Z_i\)</span> with ordinary least squares (OLS) regression. An improved solution takes into account that the squared residuals are non-negative and gamma-distributed if <span class="math inline">\(\epsilon_i\)</span> is normally distributed (Culpepper, 2010 Appendix C), hence the use of generalized linear models (McCullagh &amp; Nelder, 1989) with a log-link <span class="math inline">\(\ln(E(\epsilon_i^2 \mid Z_i))\)</span> and gamma-distribution.</p>
-<p>While this two-step solution takes distributional features of the residuals into account, it does ignore that the OLS residuals are biased estimators for heteroscedastic errors. To alleviate this issue, an iterative approach maximizing the likelihood of a joint expectation and variance model was proposed by Aitkin (1987). While the parameters of the joint location-scale model can be estimated with maximum likelihood (ML), the sensitivity especially of the variance parameter estimates to assumption violations (cf. Dunn &amp; Smyth, 2018, p. 297ff.) has led to the development of restricted maximum likelihood (REML) estimators (Verbyla, 1993).</p>
-<p>QR (Koenker &amp; Bassett Jr, 1978; Koenker, 2005a) is a statistical method that extends the concept of conditional boxplots to conditional quantiles dependent on categorical and continuous predictors, enabling researchers to investigate the relationships between explanatory variables and the distribution of response variables at different quantiles. Linear QR estimates the optimal linear combination of predictors <span class="math inline">\(X_i\)</span> to fit the conditional regression quantiles <span class="math inline">\(Q_\tau (Y_i \mid X_i)\)</span> for each quantile <span class="math inline">\(\tau\)</span> separately as <span class="math inline">\(Q_\tau (Y_i \mid X_i) = \beta_x X_i\)</span> by minimizing the weighted absolute deviations from this line. Comparing the regression coefficients for different quantiles facilitates a more nuanced understanding of how variability and trends differ across the distribution of the data. While QR has primarily been used to analyze inequality (cf. Killewald &amp; Bearak, 2014), it has recently been discussed as a tool to assess heterogeneous intervention effects (Willke et al., 2012; Marino &amp; Farcomeni, 2015).</p>
-<p>This study examines how these methods perform in analyzing differences in conditional dispersion. Previous simulation studies have typically restricted their scope to a limited number of scenarios, often lacking comparisons between quantile-based and variance-based methods (Western &amp; Bloome, 2009) or have focused on medium and large sample sizes (Yang, 2019). In those studies, REML and Bayesian estimation methods outperformed ML and Two-Step estimators with small sample sizes. QR was found to be robust against model misspecification (Cheng, 2012; Yang, 2019) and performs well in the presence of outliers (Bellio &amp; Coletto, 2016; Geraci &amp; Bottai, 2014), although this is less true for the difference between extreme quantiles (Huber &amp; Melly, 2011).</p>
+<p>We conducted a Monte-Carlo simulation study <span class="citation">(Sawilowsky 2003)</span> to evaluate and demonstrate some advantages and disadvantages of the two-step method, the maximum likelihood (ML) and restricted maximum likelihood (REML) variance function regression (VFR), and quantile regression (QR).</p>
+<p><span class="citation">Western and Bloome (2009)</span> give an extended exposition on using variance function regressions to model substantial differences in variance as indicators of differential inequality. Most approaches model the conditional expectation of the squared residuals <span class="math inline">\(\epsilon_i^2\)</span> of a conditional mean model as a function of predictors <span class="math inline">\(Z_i\)</span>​. In the most simple two-step model, the variance of the residuals can be expressed as the expectation of the squared residuals: <span class="math inline">\(\text{Var}(\epsilon_i) = E(\epsilon_i^2) - E(\epsilon_i)^2 = E(\epsilon_i^2)\)</span>, and the conditional variance is modeled as: <span class="math inline">\(\text{Var}(Y_i \mid Z_i) = E(\epsilon_i^2 \mid Z_i) = \lambda \cdot Z_i\)</span> with ordinary least squares (OLS) regression. An improved solution takes into account that the squared residuals are non-negative and gamma-distributed if <span class="math inline">\(\epsilon_i\)</span> is normally distributed <span class="citation">(Culpepper 2010, Appendix C)</span>, hence the use of generalized linear models <span class="citation">(McCullagh and Nelder 1989)</span> with a log-link <span class="math inline">\(\ln(E(\epsilon_i^2 \mid Z_i))\)</span> and gamma-distribution.</p>
+<p>While this two-step solution takes distributional features of the residuals into account, it does ignore that the OLS residuals are biased estimators for heteroscedastic errors. To alleviate this issue, an iterative approach maximizing the likelihood of a joint expectation and variance model was proposed by <span class="citation">Aitkin (1987)</span>. While the parameters of the joint location-scale model can be estimated with maximum likelihood (ML), the sensitivity especially of the variance parameter estimates to assumption violations <span class="citation">(cf. Dunn and Smyth 2018, 297ff.)</span> has led to the development of restricted maximum likelihood (REML) estimators <span class="citation">(Verbyla 1993)</span>.</p>
+<p>QR <span class="citation">(Koenker and Bassett Jr 1978; Koenker 2005)</span> is a statistical method that extends the concept of conditional boxplots to conditional quantiles dependent on categorical and continuous predictors, enabling researchers to investigate the relationships between explanatory variables and the distribution of response variables at different quantiles. Linear QR estimates the optimal linear combination of predictors <span class="math inline">\(X_i\)</span> to fit the conditional regression quantiles <span class="math inline">\(Q_\tau (Y_i \mid X_i)\)</span> for each quantile <span class="math inline">\(\tau\)</span> separately as <span class="math inline">\(Q_\tau (Y_i \mid X_i) = \beta_x X_i\)</span> by minimizing the weighted absolute deviations from this line. Comparing the regression coefficients for different quantiles facilitates a more nuanced understanding of how variability and trends differ across the distribution of the data. While QR has primarily been used to analyze inequality <span class="citation">(cf. Killewald and Bearak 2014)</span>, it has recently been discussed as a tool to assess heterogeneous intervention effects <span class="citation">(Marino and Farcomeni 2015; Willke et al. 2012)</span>.</p>
+<p>This study examines how these methods perform in analyzing differences in conditional dispersion. Previous simulation studies have typically restricted their scope to a limited number of scenarios, often lacking comparisons between quantile-based and variance-based methods <span class="citation">(Western and Bloome 2009)</span> or have focused on medium and large sample sizes <span class="citation">(Yang 2019)</span>. In those studies, REML and Bayesian estimation methods outperformed ML and Two-Step estimators with small sample sizes. QR was found to be robust against model misspecification <span class="citation">(Cheng 2012; Yang 2019)</span> and performs well in the presence of outliers <span class="citation">(Bellio and Coletto 2016; Geraci and Bottai 2014)</span>, although this is less true for the difference between extreme quantiles <span class="citation">(Huber and Melly 2011)</span>.</p>
 </div>
 <div id="simulation-scenarios" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Simulation Scenarios</h1>
@@ -2032,34 +2055,70 @@ QR
 </div>
 <div id="conclusion" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Conclusion</h2>
-<p>In conclusion, our simulation study demonstrates that none of the discussed methods are reliable for sample sizes of 30, and only REML and QR should be used for a sample size of 50. However, the power of QR is limited for this sample size in our scenarios, and more complex relationships have to be analyzed with large sample sizes or Bayesian methods that incorporate previous knowledge of researchers to allow more precise estimates in small samples (Leonard, 1975; Yu &amp; Moyeed, 2001; Western &amp; Bloome, 2009). In addition, QR proves robust not just against outliers but also against the misspecification of the location model, while the variance function regression misidentifies the unmodelled quadratic effect on the expectation as an effect on the variance.</p>
+<p>In conclusion, our simulation study demonstrates that none of the discussed methods are reliable for sample sizes of 30, and only REML and QR should be used for a sample size of 50. However, the power of QR is limited for this sample size in our scenarios, and more complex relationships have to be analyzed with large sample sizes or Bayesian methods that incorporate previous knowledge of researchers to allow more precise estimates in small samples <span class="citation">(Leonard 1975; Yu and Moyeed 2001)</span>. In addition, QR proves robust not just against outliers but also against the misspecification of the location model, while the variance function regression misidentifies the unmodelled quadratic effect on the expectation as an effect on the variance.</p>
 </div>
 </div>
-<div id="references" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> References</h1>
-<ul>
-<li>Aitkin, M. (1987). Modelling variance heterogeneity in normal regression using GLIM. <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em>, 36(3), 332–339. <a href="https://doi.org/10.2307/2347792" class="uri">https://doi.org/10.2307/2347792</a></li>
-<li>Bellio, R., &amp; Coletto, M. (2016). Simple outlier labeling based on quantile regression, with application to the steelmaking process. <em>Applied Stochastic Models in Business and Industry</em>, 32(2), 228–242. <a href="https://doi.org/10.1002/asmb.2146" class="uri">https://doi.org/10.1002/asmb.2146</a></li>
-<li>Cheng, T.-C. (2012). On simultaneously identifying outliers and heteroscedasticity without specific form. <em>Computational Statistics &amp; Data Analysis</em>, 56(7), 2258–2272. <a href="https://doi.org/10.1016/j.csda.2012.01.004" class="uri">https://doi.org/10.1016/j.csda.2012.01.004</a></li>
-<li>Culpepper, S. A. (2010). Studying individual differences in predictability with gamma regression and nonlinear multilevel models. <em>Multivariate Behavioral Research</em>, 45(1), 153–185. <a href="https://doi.org/10.1080/00273170903504885" class="uri">https://doi.org/10.1080/00273170903504885</a></li>
-<li>Dunn, P. K., &amp; Smyth, G. K. (2018). <em>Generalized linear models with examples in R</em>. Springer New York. <a href="https://doi.org/10.1007/978-1-4419-0118-7" class="uri">https://doi.org/10.1007/978-1-4419-0118-7</a></li>
-<li>Gasparini, A. (2018). rsimsum: Summarise results from Monte Carlo simulation studies. <em>Journal of Open Source Software</em>, 3(26), 739. <a href="https://doi.org/10.21105/joss.00739" class="uri">https://doi.org/10.21105/joss.00739</a></li>
-<li>Geraci, M., &amp; Bottai, M. (2014). Linear quantile mixed models. <em>Statistics and Computing</em>, 24(3), 461–479. <a href="https://doi.org/10.1007/s11222-013-9381-9" class="uri">https://doi.org/10.1007/s11222-013-9381-9</a></li>
-<li>Huber, M., &amp; Melly, B. (2011). Quantile regression in the presence of sample selection. In <em>Economics Working Paper Series</em> (1109; Economics Working Paper Series). University of St. Gallen, School of Economics and Political Science. <a href="https://ideas.repec.org/p/usg/econwp/201109.html" class="uri">https://ideas.repec.org/p/usg/econwp/201109.html</a></li>
-<li>Koenker, R. (2005a). <em>Quantile Regression</em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511754098" class="uri">https://doi.org/10.1017/CBO9780511754098</a></li>
-<li>Koenker, R., &amp; Bassett Jr, G. (1978). Regression quantiles. <em>Econometrica</em>, 46(1), 33–50.</li>
-<li>Killewald, A., &amp; Bearak, J. (2014). Is the motherhood penalty larger for low-wage women? A comment on quantile regression. <em>American Sociological Review</em>, 79(2), 350–357. <a href="https://doi.org/10.1177/0003122414524574" class="uri">https://doi.org/10.1177/0003122414524574</a></li>
-<li>Leonard, T. (1975). A Bayesian approach to the linear model with unequal variances. <em>Technometrics</em>, 17(1), 95–102.</li>
-<li>Marino, M. F., &amp; Farcomeni, A. (2015). Linear quantile regression models for longitudinal experiments: An overview. <em>METRON</em>, 73(2), 229–247. <a href="https://doi.org/10.1007/s40300-015-0072-5" class="uri">https://doi.org/10.1007/s40300-015-0072-5</a></li>
-<li>McCullagh, P., &amp; Nelder, J. A. (1989). <em>Generalized linear models</em> (2nd ed.). Chapman &amp; Hall.</li>
-<li>Morris, T. P., White, I. R., &amp; Crowther, M. J. (2019). Using simulation studies to evaluate statistical methods. <em>Statistics in Medicine</em>, 38(11), 2074–2102. <a href="https://doi.org/10.1002/sim.8086" class="uri">https://doi.org/10.1002/sim.8086</a></li>
-<li>Sawilowsky, S. S. (2003). You think you’ve got trivials? <em>Journal of Modern Applied Statistical Methods</em>, 2(1), 218–225. <a href="https://doi.org/10.22237/jmasm/1051748460" class="uri">https://doi.org/10.22237/jmasm/1051748460</a></li>
-<li>Verbyla, A. P. (1993). Modelling variance heterogeneity: Residual maximum likelihood and diagnostics. <em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, 55(2), 493–508.</li>
-<li>Western, B., &amp; Bloome, D. (2009). Variance function regressions for studying inequality. <em>Sociological Methodology</em>, 39(1), 263–326. <a href="https://doi.org/10.1111/j.1467-9531.2009.01222.x" class="uri">https://doi.org/10.1111/j.1467-9531.2009.01222.x</a></li>
-<li>Willke, R. J., Zheng, Z., Subedi, P., Althin, R., &amp; Mullins, C. D. (2012). From concepts, theory, and evidence of heterogeneity of treatment effects to methodological approaches: A primer. <em>BMC Medical Research Methodology</em>, 12(1), 185. <a href="https://doi.org/10.1186/1471-2288-12-185" class="uri">https://doi.org/10.1186/1471-2288-12-185</a></li>
-<li>Yang, F. (2019). Modeling and estimating unpredictability with applications in political economy [Master’s thesis, UCLA]. <a href="https://escholarship.org/uc/item/6595x2kh" class="uri">https://escholarship.org/uc/item/6595x2kh</a></li>
-<li>Yu, K., &amp; Moyeed, R. A. (2001). Bayesian quantile regression. <em>Statistics &amp; Probability Letters</em>, 54(4), 437–447.</li>
-</ul>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-aitkin_1987" class="csl-entry">
+Aitkin, Murray. 1987. <span>“Modelling Variance Heterogeneity in Normal Regression Using <span>GLIM</span>.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 36 (3): 332–39. <a href="https://doi.org/10.2307/2347792">https://doi.org/10.2307/2347792</a>.
+</div>
+<div id="ref-bellio.coletto_2016" class="csl-entry">
+Bellio, Ruggero, and Mauro Coletto. 2016. <span>“Simple Outlier Labeling Based on Quantile Regression, with Application to the Steelmaking Process.”</span> <em>Applied Stochastic Models in Business and Industry</em> 32 (2): 228–42. <a href="https://doi.org/10.1002/asmb.2146">https://doi.org/10.1002/asmb.2146</a>.
+</div>
+<div id="ref-cheng_2012" class="csl-entry">
+Cheng, Tsung-Chi. 2012. <span>“On Simultaneously Identifying Outliers and Heteroscedasticity Without Specific Form.”</span> <em>Computational Statistics &amp; Data Analysis</em> 56 (7): 2258–72. <a href="https://doi.org/10.1016/j.csda.2012.01.004">https://doi.org/10.1016/j.csda.2012.01.004</a>.
+</div>
+<div id="ref-culpepper_2010" class="csl-entry">
+Culpepper, Steven Andrew. 2010. <span>“Studying <span>Individual Differences</span> in <span>Predictability With Gamma Regression</span> and <span>Nonlinear Multilevel Models</span>.”</span> <em>Multivariate Behavioral Research</em> 45 (1): 153–85. <a href="https://doi.org/10.1080/00273170903504885">https://doi.org/10.1080/00273170903504885</a>.
+</div>
+<div id="ref-dunn.smyth_2018" class="csl-entry">
+Dunn, Peter K., and Gordon K. Smyth. 2018. <em>Generalized <span>Linear Models With Examples</span> in <span>R</span></em>. Springer <span>Texts</span> in <span>Statistics</span>. New York, NY: Springer New York. <a href="https://doi.org/10.1007/978-1-4419-0118-7">https://doi.org/10.1007/978-1-4419-0118-7</a>.
+</div>
+<div id="ref-geraci.bottai_2014" class="csl-entry">
+Geraci, Marco, and Matteo Bottai. 2014. <span>“Linear Quantile Mixed Models.”</span> <em>Statistics and Computing</em> 24 (3, 3): 461–79. <a href="https://doi.org/10.1007/s11222-013-9381-9">https://doi.org/10.1007/s11222-013-9381-9</a>.
+</div>
+<div id="ref-huber.melly_2011" class="csl-entry">
+Huber, Martin, and Blaise Melly. 2011. <span>“Quantile <span>Regression</span> in the <span>Presence</span> of <span>Sample Selection</span>.”</span> 1109. <em>Economics Working Paper Series</em>. <span>University of St. Gallen, School of Economics and Political Science</span>. <a href="https://ideas.repec.org/p/usg/econwp/201109.html">https://ideas.repec.org/p/usg/econwp/201109.html</a>.
+</div>
+<div id="ref-killewald.bearak_2014" class="csl-entry">
+Killewald, Alexandra, and Jonathan Bearak. 2014. <span>“Is the <span>Motherhood Penalty Larger</span> for <span>Low-Wage Women</span>? <span>A Comment</span> on <span>Quantile Regression</span>.”</span> <em>American Sociological Review</em> 79 (2): 350–57. <a href="https://doi.org/10.1177/0003122414524574">https://doi.org/10.1177/0003122414524574</a>.
+</div>
+<div id="ref-koenker_2005" class="csl-entry">
+Koenker, Roger. 2005. <em>Quantile <span>Regression</span></em>. Cambridge: Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511754098">https://doi.org/10.1017/CBO9780511754098</a>.
+</div>
+<div id="ref-koenker.bassettjr_1978" class="csl-entry">
+Koenker, Roger, and Gilbert Bassett Jr. 1978. <span>“Regression Quantiles.”</span> <em>Econometrica</em> 46 (1): 33–50.
+</div>
+<div id="ref-leonard_1975" class="csl-entry">
+Leonard, Tom. 1975. <span>“A <span>Bayesian</span> Approach to the Linear Model with Unequal Variances.”</span> <em>Technometrics</em> 17 (1): 95–102.
+</div>
+<div id="ref-marino.farcomeni_2015" class="csl-entry">
+Marino, Maria Francesca, and Alessio Farcomeni. 2015. <span>“Linear Quantile Regression Models for Longitudinal Experiments: An Overview.”</span> <em>Metron</em> 73 (2): 229–47. <a href="https://doi.org/10.1007/s40300-015-0072-5">https://doi.org/10.1007/s40300-015-0072-5</a>.
+</div>
+<div id="ref-mccullagh.nelder_1989" class="csl-entry">
+McCullagh, Peter, and John A. Nelder. 1989. <em>Generalized Linear Models</em>. 2. Aufl. Monographs on Statistics and Applied Probability 37. London [u.a.]: Chapman &amp; Hall.
+</div>
+<div id="ref-sawilowsky_2003" class="csl-entry">
+Sawilowsky, Shlomo S. 2003. <span>“You <span>Think You</span>’ve <span>Got Trivials</span>?”</span> <em>Journal of Modern Applied Statistical Methods</em> 2 (1): 218–25. <a href="https://doi.org/10.22237/jmasm/1051748460">https://doi.org/10.22237/jmasm/1051748460</a>.
+</div>
+<div id="ref-verbyla_1993" class="csl-entry">
+Verbyla, Arunas Petras. 1993. <span>“Modelling Variance Heterogeneity: Residual Maximum Likelihood and Diagnostics.”</span> <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 55 (2): 493–508.
+</div>
+<div id="ref-western.bloome_2009" class="csl-entry">
+Western, Bruce, and Deirdre Bloome. 2009. <span>“Variance <span>Function Regressions</span> for <span>Studying Inequality</span>.”</span> <em>Sociological Methodology</em> 39 (1): 263–326. <a href="https://doi.org/10.1111/j.1467-9531.2009.01222.x">https://doi.org/10.1111/j.1467-9531.2009.01222.x</a>.
+</div>
+<div id="ref-willke.etal_2012" class="csl-entry">
+Willke, Richard J., Zhiyuan Zheng, Prasun Subedi, Rikard Althin, and C. Daniel Mullins. 2012. <span>“From Concepts, Theory, and Evidence of Heterogeneity of Treatment Effects to Methodological Approaches: A Primer.”</span> <em>BMC Medical Research Methodology</em> 12 (1): 185. <a href="https://doi.org/10.1186/1471-2288-12-185">https://doi.org/10.1186/1471-2288-12-185</a>.
+</div>
+<div id="ref-yang_2019" class="csl-entry">
+Yang, Feng. 2019. <span>“Modeling and <span>Estimating Unpredictability</span> with <span>Applications</span> in <span>Political Economy</span>.”</span> Master’s thesis, Los Angeles: UCLA. <a href="https://escholarship.org/uc/item/6595x2kh">https://escholarship.org/uc/item/6595x2kh</a>.
+</div>
+<div id="ref-yu.moyeed_2001" class="csl-entry">
+Yu, Keming, and Rana A. Moyeed. 2001. <span>“Bayesian Quantile Regression.”</span> <em>Statistics &amp; Probability Letters</em> 54 (4): 437–47.
+</div>
+</div>
 </div>
 
 
