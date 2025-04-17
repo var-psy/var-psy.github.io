@@ -5,7 +5,7 @@ description: ""
 
 minima:
   nav_pages:
-    - index.md
+    - archive.md
 
 collections:
   docs:
