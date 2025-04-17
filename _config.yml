@@ -3,8 +3,7 @@ theme: minima
 title: "Variability in Behavioral Research"
 description: ""
 
-minima:
-  nav_bar:
+header_pages:
   - index.md
   - archive.md
 
