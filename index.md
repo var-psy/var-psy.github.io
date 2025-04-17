@@ -3,8 +3,6 @@ layout: default
 title: "Variability in Behavioral Research"
 ---
 
-# Variability in Behavioral Research
-
 Soon, there will be extensive material here that expands on our tutorial for using variability in behavioral research, from theorizing to testing.
 
 You can already find a sneak peek 

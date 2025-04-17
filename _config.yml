@@ -2,10 +2,10 @@ remote_theme: pages-themes/modernist@v0.2.0
 plugins:
 - jekyll-remote-theme
 
-title: "Variability"
-description: "A tutorial on variability in theory and data analysis"
+title: "Variability in Behavioral Research"
+description: ""
 
-header_pages:
+sidebar_links
   - title: Home
     url: /
   - title: Articles
