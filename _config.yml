@@ -1,11 +1,11 @@
-remote_theme: pages-themes/modernist@v0.2.0
+remote_theme: remote_theme: poole/lanyon
 plugins:
 - jekyll-remote-theme
 
 title: "Variability in Behavioral Research"
 description: ""
 
-sidebar_links
+header_pages
   - title: Home
     url: /
   - title: Articles
