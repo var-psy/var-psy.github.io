@@ -4,8 +4,11 @@ title: "Variability in Behavioral Research"
 description: ""
 
 minima:
-  nav_pages:
-    - archive.md
+  nav_bar:
+  - title: Home
+    url: /
+  - title: Articles
+    url: /archive
 
 collections:
   docs:
