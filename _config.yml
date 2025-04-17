@@ -1,4 +1,4 @@
-remote_theme: poole/lanyon
+remote_theme: "mmistakes/minimal-mistakes@4.23.0"
 plugins:
 - jekyll-remote-theme
 
