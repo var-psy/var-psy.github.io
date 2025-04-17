@@ -1,4 +1,4 @@
-remote_theme: remote_theme: poole/lanyon
+remote_theme: poole/lanyon
 plugins:
 - jekyll-remote-theme
 
