@@ -5,10 +5,8 @@ description: ""
 
 minima:
   nav_bar:
-  - title: Home
-    url: /
-  - title: Articles
-    url: /archive
+  - index.md
+  - archive.md
 
 collections:
   docs:
