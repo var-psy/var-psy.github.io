@@ -4,5 +4,5 @@ plugins:
 title: "Variability"
 description: "A tutorial on variability in theory and data analysis"
 collections:
-  docs:
+  posts:
     output: true
