@@ -5,7 +5,7 @@ plugins:
 title: "Variability in Behavioral Research"
 description: ""
 
-header_pages
+header_pages:
   - title: Home
     url: /
   - title: Articles
