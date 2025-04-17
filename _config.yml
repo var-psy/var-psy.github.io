@@ -1,9 +1,12 @@
-remote_theme: mmistakes/minimal-mistakes
-plugins:
-  - jekyll-remote-theme
+theme: minima
 
 title: "Variability in Behavioral Research"
 description: ""
+
+minima:
+  nav_pages:
+    - index.md
+    - archive.md
 
 collections:
   docs:
