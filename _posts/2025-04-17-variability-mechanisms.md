@@ -1,7 +1,7 @@
 ---
 title: "Variability Mechanisms"
 author: "Daniel Gotthardt, Christoph Naefgen & Anne Reinarz"
-date: "`r Sys.Date()`"
+date: "2025-04-17"
 output: bookdown::html_document2
 citation_package: biblatex
 bibliography: variability.bib
