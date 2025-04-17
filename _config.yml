@@ -3,3 +3,6 @@ plugins:
 - jekyll-remote-theme
 title: "Variability"
 description: "A tutorial on variability in theory and data analysis"
+collections:
+  docs:
+    output: true
