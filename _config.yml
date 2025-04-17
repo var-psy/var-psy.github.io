@@ -4,10 +4,8 @@ title: "Variability in Behavioral Research"
 description: ""
 
 header_pages:
-  - title: Home
-    url: /
-  - title: Articles
-    url: /archive
+  - index.md
+  - archive.md
 
 collections:
   docs:
